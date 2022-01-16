@@ -50,6 +50,10 @@ public class ListTextCommand extends BaseCommand {
 				return;
 			}
 		}
+		if (groupIds.isEmpty()) {
+			player.sendMessage(Component.text("You have no permission to view any groups snitches!").color(NamedTextColor.RED));
+			return;
+		}
 		int pageLength = JukeAlert.getInstance().getSettingsManager().getJaListLength(player.getUniqueId());
 		//This is needed for the lambda below on buildSnitchList
 		int finalOffset = offset;
