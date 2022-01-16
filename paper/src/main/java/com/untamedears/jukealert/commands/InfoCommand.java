@@ -47,12 +47,15 @@ public class InfoCommand extends BaseCommand {
 					+ " can not save logs");
 			return;
 		}
-		int offset = 0;
+		int offset = 1;
 		String filterAction = null;
 		String filterPlayer = null;
 		if (pageNumber != null) {
 			try {
 				offset = Integer.parseInt(pageNumber);
+				if (offset == 0) {
+					offset = 1;
+				}
 			} catch (NumberFormatException e) {
 				player.sendMessage(ChatColor.RED + pageNumber + " is not a number");
 				return;
@@ -94,10 +97,10 @@ public class InfoCommand extends BaseCommand {
 			logs = logCopy;
 		}
 		Collections.reverse(logs);
-		int initialOffset = pageLength * offset;
+		int initialOffset = (offset - 1) * pageLength;
 		if (initialOffset >= logs.size()) {
 			TextComponent reply = JAUtility.genTextComponent(snitch);
-			reply.addExtra(ChatColor.GOLD + " has only " + logs.size() + " logs fitting your criteria");
+			reply.addExtra(ChatColor.GOLD + " has only " + (logs.size() / pageLength) + 1 + " pages fitting your criteria");
 			player.spigot().sendMessage(reply);
 			return;
 		}
