@@ -73,7 +73,7 @@ public class ListTextCommand extends BaseCommand {
 	private void buildList(Player player, List<Snitch> snitchList, int offset, int pageLength) {
 		int initialOffset = (offset - 1) * pageLength;
 		if (initialOffset >= snitchList.size()) {
-			player.sendMessage(Component.text("There are only " + (snitchList.size() / pageLength) + 1 + " pages for you to look at").color(NamedTextColor.RED));
+			player.sendMessage(Component.text("There are only " + ((snitchList.size() / pageLength) + 1) + " pages for you to look at").color(NamedTextColor.RED));
 			return;
 		}
 		int currentPageSize = Math.min(pageLength, snitchList.size() - initialOffset);
@@ -105,7 +105,7 @@ public class ListTextCommand extends BaseCommand {
 				.append(Component.text("❰❰")
 								.hoverEvent(HoverEvent.showText(Component.text("Go to page " + (currentPage - 1))))
 								.clickEvent(ClickEvent.runCommand("/" + COMMAND_ALIAS + " " + (currentPage - 1))))
-				.append(Component.text("---"))
+				.append(Component.text("----------"))
 				.append(Component.text("❯❯")
 						.hoverEvent(HoverEvent.showText(Component.text("Go to page " + (currentPage + 1))))
 						.clickEvent(ClickEvent.runCommand("/" + COMMAND_ALIAS + " " + (currentPage + 1))))

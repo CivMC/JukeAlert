@@ -100,7 +100,7 @@ public class InfoCommand extends BaseCommand {
 		int initialOffset = (offset - 1) * pageLength;
 		if (initialOffset >= logs.size()) {
 			TextComponent reply = JAUtility.genTextComponent(snitch);
-			reply.addExtra(ChatColor.GOLD + " has only " + (logs.size() / pageLength) + 1 + " pages fitting your criteria");
+			reply.addExtra(ChatColor.GOLD + " has only " + ((logs.size() / pageLength) + 1) + " pages fitting your criteria");
 			player.spigot().sendMessage(reply);
 			return;
 		}
