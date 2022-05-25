@@ -14,9 +14,7 @@ database:
 snitchConfigs:
   note:
     item:
-      ==: org.bukkit.inventory.ItemStack
-      type: NOTE_BLOCK
-      amount: 1
+      material: NOTE_BLOCK
     id: 0
     name: Snitch
     range:
@@ -35,9 +33,7 @@ snitchConfigs:
       showownerondestroy: {}
   juke:
     item:
-      ==: org.bukkit.inventory.ItemStack
-      type: JUKEBOX
-      amount: 1
+      material: JUKEBOX
     id: 1
     name: Logsnitch
     range: 11
@@ -69,3 +65,25 @@ snitchConfigs:
         acceptAll: true
         lifeTime: 4 weeks
         hardCap: 100000
+  tallsnitch:
+    item:
+      material: NOTE_BLOCK
+      name: Tall Snitch
+      lore:
+        - This snitch is better than regular
+    id: 2
+    name: Tall Snitch
+    range:
+      type: cuboid
+      width: 11
+      height: 40
+    appender:
+      broadcast:
+        trigger:
+          - ENTRY
+          - LOGIN
+          - LOGOUT
+      dormantcull:
+        lifeTime: 2 weeks
+        dormantTime: 2 weeks
+      showownerondestroy: {}

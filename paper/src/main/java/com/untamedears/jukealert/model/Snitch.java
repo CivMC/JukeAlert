@@ -242,7 +242,7 @@ public class Snitch extends LocationTrackable {
 			return false;
 		}
 		Block block = getLocation().getBlock();
-		if (block.getType() != this.type.getItem().getType()) {
+		if (block.getType() != this.type.getItemMaterial()) {
 			//block is no longer a snitch
 			destroy(null, Cause.CLEANUP);
 			return false;
