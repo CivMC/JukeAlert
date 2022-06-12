@@ -6,15 +6,18 @@ import com.untamedears.jukealert.model.Snitch;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
+import org.jetbrains.annotations.NotNull;
+import vg.civcraft.mc.civmodcore.world.WorldUtils;
 import vg.civcraft.mc.namelayer.permission.PermissionType;
 
 // Static methods only
@@ -64,19 +67,52 @@ public final class JAUtility {
 		return null;
 	}
 
-	public static TextComponent genTextComponent(Snitch snitch) {
-		String name = snitch.getName().isEmpty() ? snitch.getType().getName() : snitch.getName();
-		TextComponent textComponent = new TextComponent(ChatColor.AQUA + name);
-		addSnitchHoverText(textComponent, snitch);
-		return textComponent;
+	public static Component genTextComponent(final @NotNull Snitch snitch) {
+		final Location location = snitch.getLocation();
+		final TextComponent.Builder hoverText = Component.text()
+				.append(
+						Component.text("[Location: ", NamedTextColor.GOLD),
+						Component.text("(%s) [%d %d %d]".formatted(
+								location.getWorld().getName(),
+								location.getBlockX(),
+								location.getBlockY(),
+								location.getBlockZ()
+						), NamedTextColor.AQUA)
+				);
+		final String snitchName = snitch.getName();
+		if (StringUtils.isNotBlank(snitchName)) {
+			hoverText.append(
+					Component.newline(),
+					Component.text("Name: ", NamedTextColor.GOLD),
+					Component.text(snitchName, NamedTextColor.AQUA)
+			);
+		}
+		hoverText.append(
+				Component.newline(),
+				Component.text("Group: ", NamedTextColor.GOLD),
+				Component.text(snitch.getGroup().getName(), NamedTextColor.AQUA)
+		);
+		return Component.text()
+				.color(NamedTextColor.AQUA)
+				.content(StringUtils.isNotBlank(snitchName) ? snitchName : snitch.getType().getName())
+				.hoverEvent(HoverEvent.showText(hoverText))
+				.build();
 	}
 
-	public static String genDirections(Snitch snitch, Player player) {
-		if (snitch.getLocation().getWorld().equals(player.getLocation().getWorld())) {
-			return String.format("%s[%sm %s%s%s]", ChatColor.GREEN, Math.round(player.getLocation().distance(snitch.getLocation())), ChatColor.RED, getCardinal(player.getLocation(), snitch.getLocation()), ChatColor.GREEN);
-		} else {
-			return ""; // Can't get directions to another world
+	public static Component genDirections(Snitch snitch, Player player) {
+		final Location snitchLocation = snitch.getLocation();
+		final Location playerLocation = player.getLocation();
+		if (WorldUtils.doLocationsHaveSameWorld(snitchLocation, playerLocation)) {
+			return Component.text()
+					.color(NamedTextColor.GREEN)
+					.append(
+							Component.text("[" + Math.round(playerLocation.distance(snitchLocation)) + "m "),
+							Component.text(getCardinal(player.getLocation(), snitch.getLocation()), NamedTextColor.RED),
+							Component.text("]")
+					)
+					.build();
 		}
+		return Component.empty();
 	}
 
 	public static String getCardinal(Location start, Location end) {
@@ -102,18 +138,6 @@ public final class JAUtility {
 		} else {
 			return "";
 		}
-	}
-
-	public static void addSnitchHoverText(TextComponent text, Snitch snitch) {
-		StringBuilder sb = new StringBuilder();
-		Location loc = snitch.getLocation();
-		sb.append(String.format("%sLocation: %s(%s) [%d %d %d]%n", ChatColor.GOLD, ChatColor.AQUA,
-				loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-		if (!snitch.getName().isEmpty()) {
-			sb.append(String.format("%sName: %s%s%n", ChatColor.GOLD, ChatColor.AQUA, snitch.getName()));
-		}
-		sb.append(String.format("%sGroup: %s%s", ChatColor.GOLD, ChatColor.AQUA, snitch.getGroup().getName()));
-		text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(sb.toString())));
 	}
 
 	public static Material parseMaterial(String id) {

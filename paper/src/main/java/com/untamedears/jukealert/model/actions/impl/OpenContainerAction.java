@@ -3,6 +3,7 @@ package com.untamedears.jukealert.model.actions.impl;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.abstr.LoggableBlockAction;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -15,8 +16,8 @@ public class OpenContainerAction extends LoggableBlockAction {
 	}
 
 	@Override
-	protected String getChatRepresentationIdentifier() {
-		return "Opened";
+	protected Component getChatRepresentationIdentifier() {
+		return Component.text("Opened");
 	}
 
 	@Override

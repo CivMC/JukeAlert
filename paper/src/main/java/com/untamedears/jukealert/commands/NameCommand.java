@@ -10,7 +10,8 @@ import co.aikar.commands.annotation.Syntax;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.util.JAUtility;
 import com.untamedears.jukealert.util.JukeAlertPermissionHandler;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -34,10 +35,14 @@ public class NameCommand extends BaseCommand {
 		}
 		String prevName = snitch.getName();
 		snitch.setName(name);
-		TextComponent lineText = new TextComponent(ChatColor.AQUA + " Changed snitch name to ");
-		lineText.addExtra(JAUtility.genTextComponent(snitch));
-		lineText.addExtra(ChatColor.AQUA + " from " + ChatColor.GOLD + prevName);
-		player.spigot().sendMessage(lineText);
-
+		player.sendMessage(Component.text()
+				.color(NamedTextColor.AQUA)
+				.content("Changed snitch name to ")
+				.append(
+						JAUtility.genTextComponent(snitch),
+						Component.text(" from "),
+						Component.text(prevName, NamedTextColor.GOLD)
+				)
+		);
 	}
 }

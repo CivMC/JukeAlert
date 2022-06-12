@@ -2,7 +2,7 @@ package com.untamedears.jukealert.model.actions.abstr;
 
 import com.untamedears.jukealert.model.actions.ActionCacheState;
 import com.untamedears.jukealert.model.actions.LoggedActionPersistence;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import vg.civcraft.mc.civmodcore.inventory.gui.IClickable;
 
@@ -19,7 +19,7 @@ public interface LoggableAction {
 	 * @return TextComponent representing this instance ready for sending to a
 	 *         player
 	 */
-	TextComponent getChatRepresentation(Location reference, boolean live);
+	Component getChatRepresentation(Location reference, boolean live);
 
 	LoggedActionPersistence getPersistence();
 

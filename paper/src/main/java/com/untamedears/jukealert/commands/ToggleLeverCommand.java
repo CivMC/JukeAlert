@@ -9,7 +9,7 @@ import co.aikar.commands.annotation.Description;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.appender.LeverToggleAppender;
 import com.untamedears.jukealert.util.JukeAlertPermissionHandler;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import vg.civcraft.mc.namelayer.permission.PermissionType;
 
@@ -25,7 +25,7 @@ public class ToggleLeverCommand extends BaseCommand {
 		Snitch snitch = findLookingAtOrClosestSnitch(player, togglePerm);
 		if (snitch == null) {
 			player.sendMessage(
-					org.bukkit.ChatColor.RED + "You do not own any snitches nearby or lack permission to view their logs!");
+					ChatColor.RED + "You do not own any snitches nearby or lack permission to view their logs!");
 			return;
 		}
 		if (!snitch.hasAppender(LeverToggleAppender.class)) {

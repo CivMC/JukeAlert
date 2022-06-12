@@ -9,9 +9,11 @@ import com.untamedears.jukealert.util.JASettingsManager;
 import com.untamedears.jukealert.util.JAUtility;
 import com.untamedears.jukealert.util.JukeAlertPermissionHandler;
 import java.util.UUID;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -48,18 +50,25 @@ public class BroadcastEntryAppender extends ConfigurableSnitchAppender<LimitedAc
 				continue;
 			}
 			if (snitch.hasPermission(uuid, JukeAlertPermissionHandler.getSnitchAlerts())) {
-				TextComponent comp = log.getChatRepresentation(player.getLocation(), true);
+
+				final TextComponent.Builder comp = Component.text().append(
+						log.getChatRepresentation(player.getLocation(), true)
+				);
 
 				if (settings.shouldShowDirections(uuid)) {
-					comp.addExtra(String.format("  %s", JAUtility.genDirections(snitch, player)));
+					comp.append(
+							Component.text("  "),
+							JAUtility.genDirections(this.snitch, player)
+					);
 				}
 				if (settings.monocolorAlerts(uuid)) {
-					String raw = comp.toPlainText();
-					raw = ChatColor.stripColor(raw);
-					player.sendMessage(ChatColor.AQUA + raw);
+					player.sendMessage(Component.text(
+							PlainTextComponentSerializer.plainText().serialize(comp.build()),
+							NamedTextColor.AQUA
+					));
 				}
 				else {
-					player.spigot().sendMessage(comp);
+					player.sendMessage(comp);
 				}
 			}
 		}

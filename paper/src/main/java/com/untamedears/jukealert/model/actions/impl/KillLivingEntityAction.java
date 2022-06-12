@@ -3,6 +3,7 @@ package com.untamedears.jukealert.model.actions.impl;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.abstr.LoggablePlayerVictimAction;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -30,8 +31,8 @@ public class KillLivingEntityAction extends LoggablePlayerVictimAction {
 	}
 	
 	@Override
-	protected String getChatRepresentationIdentifier() {
-		return "Killed " + getVictim();
+	protected Component getChatRepresentationIdentifier() {
+		return Component.text("Killed " + getVictim());
 	}
 
 }

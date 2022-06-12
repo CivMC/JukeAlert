@@ -3,6 +3,7 @@ package com.untamedears.jukealert.model.actions.impl;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.abstr.LoggablePlayerAction;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import vg.civcraft.mc.civmodcore.inventory.gui.IClickable;
 
 public class LeaveFieldAction extends LoggablePlayerAction {
@@ -24,8 +25,8 @@ public class LeaveFieldAction extends LoggablePlayerAction {
 	}
 
 	@Override
-	protected String getChatRepresentationIdentifier() {
-		return "Leave";
+	protected Component getChatRepresentationIdentifier() {
+		return Component.text("Leave");
 	}
 
 }

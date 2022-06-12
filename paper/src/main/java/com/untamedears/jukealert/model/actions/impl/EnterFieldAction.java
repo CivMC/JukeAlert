@@ -4,6 +4,7 @@ import com.untamedears.jukealert.events.PlayerHitSnitchEvent;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.abstr.LoggablePlayerAction;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import vg.civcraft.mc.civmodcore.inventory.gui.IClickable;
 
@@ -31,7 +32,7 @@ public class EnterFieldAction extends LoggablePlayerAction {
 	}
 
 	@Override
-	protected String getChatRepresentationIdentifier() {
-		return "Enter";
+	protected Component getChatRepresentationIdentifier() {
+		return Component.text("Enter");
 	}
 }

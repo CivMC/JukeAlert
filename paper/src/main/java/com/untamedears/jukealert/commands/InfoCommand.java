@@ -23,7 +23,6 @@ import java.util.ListIterator;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -100,19 +99,21 @@ public class InfoCommand extends BaseCommand {
 		}
 		int initialOffset = pageLength * offset;
 		if (initialOffset >= logs.size()) {
-			TextComponent reply = JAUtility.genTextComponent(snitch);
-			reply.addExtra(ChatColor.GOLD + " has only " + logs.size() + " logs fitting your criteria");
-			player.spigot().sendMessage(reply);
+			player.sendMessage(Component.text().append(
+					JAUtility.genTextComponent(snitch),
+					Component.text(" has only " + logs.size() + " logs fitting your criteria", NamedTextColor.GOLD)
+			));
 			return;
 		}
 		int currentPageSize = Math.min(pageLength, logs.size() - initialOffset);
 		ListIterator<LoggableAction> iter = logs.listIterator(initialOffset);
 		int currentSlot = 0;
-		TextComponent reply = new TextComponent(ChatColor.GOLD + "--- Page " + offset + " for ");
-		reply.addExtra(JAUtility.genTextComponent(snitch));
-		player.spigot().sendMessage(reply);
+		player.sendMessage(Component.text()
+				.color(NamedTextColor.GOLD)
+				.content("--- Page " + offset + " for ")
+				.append(JAUtility.genTextComponent(snitch)));
 		while (currentSlot++ < currentPageSize) {
-			player.spigot().sendMessage(iter.next().getChatRepresentation(player.getLocation(), false));
+			player.sendMessage(iter.next().getChatRepresentation(player.getLocation(), false));
 		}
 	}
 

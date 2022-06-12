@@ -4,8 +4,9 @@ import com.untamedears.jukealert.events.PlayerLoginSnitchEvent;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.abstr.LoggablePlayerAction;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import vg.civcraft.mc.civmodcore.inventory.gui.IClickable;
 
 public class LoginAction extends LoggablePlayerAction {
@@ -32,7 +33,10 @@ public class LoginAction extends LoggablePlayerAction {
 	}
 
 	@Override
-	protected String getChatRepresentationIdentifier() {
-		return ChatColor.BOLD + "Login";
+	protected Component getChatRepresentationIdentifier() {
+		return Component.text()
+				.decoration(TextDecoration.BOLD, TextDecoration.State.TRUE)
+				.content("Login")
+				.build();
 	}
 }

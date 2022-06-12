@@ -5,13 +5,16 @@ import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.ActionCacheState;
 import com.untamedears.jukealert.model.actions.LoggedActionPersistence;
 import com.untamedears.jukealert.util.JAUtility;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import vg.civcraft.mc.civmodcore.CivModCorePlugin;
 import vg.civcraft.mc.civmodcore.inventory.gui.ClickableInventory;
 import vg.civcraft.mc.civmodcore.inventory.gui.DecorationStack;
@@ -62,25 +65,29 @@ public abstract class LoggablePlayerAction extends PlayerAction implements Logga
 	}
 	
 	@Override
-	public TextComponent getChatRepresentation(Location reference, boolean live) {
-		Location referenceLoc = getLocationForStringRepresentation();
-		boolean sameWorld = JAUtility.isSameWorld(referenceLoc, reference);
-		TextComponent comp = new TextComponent(
-				String.format("%s%s  %s%s  ", ChatColor.GOLD, getChatRepresentationIdentifier(), ChatColor.GREEN, NameAPI.getCurrentName(getPlayer())));
+	public Component getChatRepresentation(Location reference, boolean live) {
+		final Location referenceLoc = getLocationForStringRepresentation();
+		final boolean sameWorld = JAUtility.isSameWorld(referenceLoc, reference);
+		final TextComponent.Builder component = Component.text().append(
+				Component.text().color(NamedTextColor.GOLD).append(getChatRepresentationIdentifier()),
+				Component.text("  "),
+				Component.text(NameAPI.getCurrentName(getPlayer()), NamedTextColor.GREEN),
+				Component.text("  ")
+		);
 		if (live) {
-			comp.addExtra(JAUtility.genTextComponent(snitch));
-			comp.addExtra(String.format("  %s%s", ChatColor.YELLOW,
-					JAUtility.formatLocation(referenceLoc, !sameWorld)));
+			component.append(
+					JAUtility.genTextComponent(this.snitch),
+					Component.text(JAUtility.formatLocation(referenceLoc, !sameWorld), NamedTextColor.YELLOW)
+			);
 		}
 		else {
-			//dont need to explicitly list location when retrieving logs and its the snitch location
-			if (referenceLoc != snitch.getLocation()) {
-				comp.addExtra(String.format("%s%s", ChatColor.YELLOW,
-						JAUtility.formatLocation(referenceLoc, !sameWorld)));
+			// don't need to explicitly list location when retrieving logs and its the snitch location
+			if (referenceLoc != this.snitch.getLocation()) {
+				component.append(Component.text(JAUtility.formatLocation(referenceLoc, !sameWorld), NamedTextColor.YELLOW));
 			}
-			comp.addExtra(new TextComponent(ChatColor.AQUA + getFormattedTime()));
+			component.append(Component.text(getFormattedTime(), NamedTextColor.AQUA));
 		}
-		return comp;
+		return component.build();
 	}
 	
 	protected void enrichGUIItem(ItemStack item) {
@@ -88,12 +95,17 @@ public abstract class LoggablePlayerAction extends PlayerAction implements Logga
 			JukeAlert.getInstance().getLogger().info("Tried to enrich air");
 			item = new ItemStack(Material.STONE);
 		}
-		ItemUtils.addLore(item, String.format("%sPlayer: %s", ChatColor.GOLD, getPlayerName()),
-				String.format("%sTime: %s", ChatColor.LIGHT_PURPLE,getFormattedTime()));
-		ItemUtils.setDisplayName(item, ChatColor.GOLD + getGUIName());
+		ItemUtils.handleItemMeta(item, (final ItemMeta meta) -> {
+			meta.displayName(Component.text().color(NamedTextColor.GOLD).append(getGUIName()).build());
+			meta.lore(List.of(
+					Component.text("Player: " + getPlayerName(), NamedTextColor.GOLD),
+					Component.text("Time: " + getFormattedTime(), NamedTextColor.LIGHT_PURPLE)
+			));
+			return true;
+		});
 	}
 	
-	protected String getGUIName() {
+	protected Component getGUIName() {
 		return getChatRepresentationIdentifier();
 	}
 	
@@ -101,7 +113,7 @@ public abstract class LoggablePlayerAction extends PlayerAction implements Logga
 		return snitch.getLocation();
 	}
 	
-	protected abstract String getChatRepresentationIdentifier();
+	protected abstract Component getChatRepresentationIdentifier();
 
 	protected IClickable getEnrichedClickableSkullFor(UUID uuid) {
 		CompletableFuture<ItemStack> itemReadyFuture = new CompletableFuture<>();

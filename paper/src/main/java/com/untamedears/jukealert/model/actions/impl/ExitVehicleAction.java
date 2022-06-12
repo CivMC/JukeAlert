@@ -4,12 +4,12 @@ import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.abstr.LoggablePlayerVictimAction;
 import com.untamedears.jukealert.util.JAUtility;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import vg.civcraft.mc.civmodcore.inventory.gui.DecorationStack;
 import vg.civcraft.mc.civmodcore.inventory.gui.IClickable;
-import vg.civcraft.mc.civmodcore.inventory.items.ItemUtils;
 
 public class ExitVehicleAction extends LoggablePlayerVictimAction {
 
@@ -39,8 +39,11 @@ public class ExitVehicleAction extends LoggablePlayerVictimAction {
 	}
 	
 	@Override
-	protected String getChatRepresentationIdentifier() {
-		return "Exited " + ItemUtils.getItemName(getVehicle());
+	protected Component getChatRepresentationIdentifier() {
+		return Component.text()
+				.content("Exited ")
+				.append(Component.translatable(getVehicle().translationKey()))
+				.build();
 	}
 
 }
