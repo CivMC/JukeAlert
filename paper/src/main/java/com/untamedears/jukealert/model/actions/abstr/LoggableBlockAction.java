@@ -4,6 +4,8 @@ import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.actions.LoggedActionPersistence;
 import com.untamedears.jukealert.util.JAUtility;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,7 +69,10 @@ public abstract class LoggableBlockAction extends LoggablePlayerAction {
 					String.format("%sMaterial: %s%s", ChatColor.GOLD, ChatColor.AQUA, ItemUtils.getItemName(getMaterial())));
 		}
 		super.enrichGUIItem(is);
-		ItemUtils.addLore(is, ChatColor.GOLD + JAUtility.formatLocation(location, false));
+		ItemUtils.addComponentLore(is, Component.text()
+				.color(NamedTextColor.GOLD)
+				.append(JAUtility.formatLocation(location, false))
+				.build());
 		return new DecorationStack(is);
 	}
 	

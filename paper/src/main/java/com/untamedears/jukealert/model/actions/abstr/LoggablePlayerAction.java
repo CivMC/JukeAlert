@@ -77,13 +77,17 @@ public abstract class LoggablePlayerAction extends PlayerAction implements Logga
 		if (live) {
 			component.append(
 					JAUtility.genTextComponent(this.snitch),
-					Component.text(JAUtility.formatLocation(referenceLoc, !sameWorld), NamedTextColor.YELLOW)
+					Component.text()
+							.color(NamedTextColor.YELLOW)
+							.append(JAUtility.formatLocation(referenceLoc, !sameWorld))
 			);
 		}
 		else {
 			// don't need to explicitly list location when retrieving logs and its the snitch location
 			if (referenceLoc != this.snitch.getLocation()) {
-				component.append(Component.text(JAUtility.formatLocation(referenceLoc, !sameWorld), NamedTextColor.YELLOW));
+				component.append(Component.text()
+						.color(NamedTextColor.YELLOW)
+						.append(JAUtility.formatLocation(referenceLoc, !sameWorld)));
 			}
 			component.append(Component.text(getFormattedTime(), NamedTextColor.AQUA));
 		}

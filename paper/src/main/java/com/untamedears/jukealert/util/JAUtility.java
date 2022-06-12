@@ -107,7 +107,7 @@ public final class JAUtility {
 					.color(NamedTextColor.GREEN)
 					.append(
 							Component.text("[" + Math.round(playerLocation.distance(snitchLocation)) + "m "),
-							Component.text(getCardinal(player.getLocation(), snitch.getLocation()), NamedTextColor.RED),
+							Component.text(getCardinal(playerLocation, snitchLocation), NamedTextColor.RED),
 							Component.text("]")
 					)
 					.build();
@@ -152,12 +152,17 @@ public final class JAUtility {
 		return loc1.getWorld().getUID().equals(loc2.getWorld().getUID());
 	}
 
-	public static String formatLocation(Location location, boolean includeWorld) {
-		if (includeWorld) {
-			return String.format("[%s %d %d %d]", location.getWorld().getName(), location.getBlockX(), location.getBlockY(),
-					location.getBlockZ());
-		}
-		return String.format("[%d %d %d]", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+	public static Component formatLocation(Location location, boolean includeWorld) {
+		return Component.text(includeWorld ?
+				"[%s %d %d %d]".formatted(
+						location.getWorld().getName(),
+						location.getBlockX(),
+						location.getBlockY(),
+						location.getBlockZ()) :
+				"[%d %d %d]".formatted(
+						location.getBlockX(),
+						location.getBlockY(),
+						location.getBlockZ()));
 	}
 
 	public static Material getVehicle(String vehicle) {
