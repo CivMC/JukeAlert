@@ -146,6 +146,6 @@ public class SnitchLifeCycleListener implements Listener {
 					e.getReinforcement().getGroup().getName(), e.getNewGroup().getName(), location.getBlockX(),
 					location.getBlockY(), location.getBlockZ()));
 		}
-		snitch.setGroup(e.getNewGroup());
+		snitchManager.setSnitchGroup(snitch, e.getNewGroup());
 	}
 }
