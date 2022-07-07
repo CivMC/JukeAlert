@@ -7,6 +7,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Syntax;
+import com.untamedears.jukealert.JukeAlert;
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.util.JAUtility;
 import com.untamedears.jukealert.util.JukeAlertPermissionHandler;
@@ -34,7 +35,7 @@ public class NameCommand extends BaseCommand {
 			return;
 		}
 		String prevName = snitch.getName();
-		snitch.setName(name);
+		JukeAlert.getInstance().getSnitchManager().renameSnitch(snitch, name);
 		player.sendMessage(Component.text()
 				.color(NamedTextColor.AQUA)
 				.content("Changed snitch name to ")
