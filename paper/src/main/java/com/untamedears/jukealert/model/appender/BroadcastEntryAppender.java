@@ -56,10 +56,13 @@ public class BroadcastEntryAppender extends ConfigurableSnitchAppender<LimitedAc
 				);
 
 				if (settings.shouldShowDirections(uuid)) {
-					comp.append(
-							Component.text("  "),
-							JAUtility.genDirections(this.snitch, player)
-					);
+					final Component direction = JAUtility.genDirections(this.snitch, player);
+					if (direction != Component.empty()) {
+						comp.append(
+								Component.text("  "),
+								direction
+						);
+					}
 				}
 				if (settings.monocolorAlerts(uuid)) {
 					player.sendMessage(Component.text(
