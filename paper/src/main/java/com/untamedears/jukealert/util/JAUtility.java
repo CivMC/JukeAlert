@@ -68,34 +68,36 @@ public final class JAUtility {
 	}
 
 	public static Component genTextComponent(final @NotNull Snitch snitch) {
-		final Location location = snitch.getLocation();
-		final TextComponent.Builder hoverText = Component.text()
-				.append(
-						Component.text("Location: ", NamedTextColor.GOLD),
-						Component.text("(%s) [%d %d %d]".formatted(
-								location.getWorld().getName(),
-								location.getBlockX(),
-								location.getBlockY(),
-								location.getBlockZ()
-						), NamedTextColor.AQUA)
-				);
 		final String snitchName = snitch.getName();
-		if (StringUtils.isNotBlank(snitchName)) {
-			hoverText.append(
-					Component.newline(),
-					Component.text("Name: ", NamedTextColor.GOLD),
-					Component.text(snitchName, NamedTextColor.AQUA)
-			);
-		}
-		hoverText.append(
-				Component.newline(),
-				Component.text("Group: ", NamedTextColor.GOLD),
-				Component.text(snitch.getGroup().getName(), NamedTextColor.AQUA)
-		);
 		return Component.text()
 				.color(NamedTextColor.AQUA)
 				.content(StringUtils.isNotBlank(snitchName) ? snitchName : snitch.getType().getName())
-				.hoverEvent(HoverEvent.showText(hoverText))
+				.hoverEvent(HoverEvent.showText(() -> {
+					final Location location = snitch.getLocation();
+					final TextComponent.Builder hoverText = Component.text();
+					hoverText.append(
+							Component.text("Location: ", NamedTextColor.GOLD),
+							Component.text("(%s) [%d %d %d]".formatted(
+									location.getWorld().getName(),
+									location.getBlockX(),
+									location.getBlockY(),
+									location.getBlockZ()
+							), NamedTextColor.AQUA)
+					);
+					if (StringUtils.isNotBlank(snitchName)) {
+						hoverText.append(
+								Component.newline(),
+								Component.text("Name: ", NamedTextColor.GOLD),
+								Component.text(snitchName, NamedTextColor.AQUA)
+						);
+					}
+					hoverText.append(
+							Component.newline(),
+							Component.text("Group: ", NamedTextColor.GOLD),
+							Component.text(snitch.getGroup().getName(), NamedTextColor.AQUA)
+					);
+					return hoverText.build();
+				}))
 				.build();
 	}
 
