@@ -79,6 +79,7 @@ public abstract class LoggablePlayerAction extends PlayerAction implements Logga
 					JAUtility.genTextComponent(this.snitch),
 					Component.text()
 							.color(NamedTextColor.YELLOW)
+							.content("  ")
 							.append(JAUtility.formatLocation(referenceLoc, !sameWorld))
 			);
 		}
