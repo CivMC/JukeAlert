@@ -71,7 +71,7 @@ public final class JAUtility {
 		final Location location = snitch.getLocation();
 		final TextComponent.Builder hoverText = Component.text()
 				.append(
-						Component.text("[Location: ", NamedTextColor.GOLD),
+						Component.text("Location: ", NamedTextColor.GOLD),
 						Component.text("(%s) [%d %d %d]".formatted(
 								location.getWorld().getName(),
 								location.getBlockX(),
