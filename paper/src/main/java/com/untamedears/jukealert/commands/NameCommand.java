@@ -12,7 +12,6 @@ import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.util.JAUtility;
 import com.untamedears.jukealert.util.JukeAlertPermissionHandler;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,43 +22,36 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NameCommand extends BaseCommand {
-	private record CommandInfo(String worldName, Integer x, Integer y, Integer z, String snitchName){}
+	private record CommandInfo(Integer x, Integer y, Integer z, String snitchName){}
 
 	@CommandAlias("janame")
-	@Syntax("[[<world>] <x> <y> <z>] <name> - enclose name to the double quotes if it contains space symbol(s)")
+	@Syntax("[<x> <y> <z>] <name> - enclose name to the double quotes if it contains space symbol(s)")
 	@Description("Name a snitch")
 	public void execute(Player player, String[] args) throws InvalidCommandArgument {
-		CommandInfo commandInfo = parseArgs(args);
-		if (commandInfo == null) {
+		if (args.length == 0) {
 			throw new InvalidCommandArgument();
 		}
 
-		if (commandInfo.x == null) {
-			executeOnlyName(player, commandInfo.snitchName);
-		} else if (commandInfo.worldName == null) {
-			executeCoords(player, commandInfo.x, commandInfo.y, commandInfo.z, commandInfo.snitchName);
-		} else {
-			executeFullDetails(player, commandInfo.worldName, commandInfo.x, commandInfo.y, commandInfo.z, commandInfo.snitchName);
+		CommandInfo commandInfo = parseArgs(args);
+		if (commandInfo == null) {
+			throw new InvalidCommandArgument("Invalid arguments");
 		}
+
+		renameSnitch(player, commandInfo);
 	}
 
 	private static CommandInfo parseArgs(String[] args) {
-		if (args.length == 0) {
-			return null;
-		}
-
 		if (args.length > 1 && !args[0].startsWith("\"")) {
 			return parseExtendedSyntax(args);
 		}
 
 		String snitchName = getSnitchName(args, 0);
 		return snitchName != null
-				? new CommandInfo(null, null, null, null, snitchName)
+				? new CommandInfo(null, null, null, snitchName)
 				: null;
 	}
 
 	private static CommandInfo parseExtendedSyntax(String[] args) {
-		String worldName = null;
 		Integer x = null;
 		Integer y = null;
 		Integer z = null;
@@ -69,14 +61,11 @@ public class NameCommand extends BaseCommand {
 			String arg = args[i];
 			if (z == null && isInteger(arg)) {
 				int value = Integer.parseInt(arg);
-				int coordIndex = worldName != null ? i - 1 : i;
-				switch (coordIndex) {
+				switch (i) {
 					case 0 -> x = value;
 					case 1 -> y = value;
 					case 2 -> z = value;
 				}
-			} else if (worldName == null && x == null && !arg.startsWith("\"")) {
-				worldName = arg;
 			} else {
 				snitchName = getSnitchName(args, i);
 				break;
@@ -84,7 +73,7 @@ public class NameCommand extends BaseCommand {
 		}
 
 		return snitchName != null && (x == null || z != null)
-				? new CommandInfo(worldName, x, y, z, snitchName)
+				? new CommandInfo(x, y, z, snitchName)
 				: null;
 	}
 
@@ -113,43 +102,28 @@ public class NameCommand extends BaseCommand {
 		return true;
 	}
 
-	private static void executeOnlyName(Player player, String snitchName) {
-		Snitch snitch = findLookingAtOrClosestSnitch(player, getPermission());
+	private static void renameSnitch(Player player, CommandInfo commandInfo) {
+		Snitch snitch;
+
+		if (commandInfo.x == null) {
+			snitch = findLookingAtOrClosestSnitch(player, getPermission());
+		} else {
+			World world = player.getLocation().getWorld();
+			Location location = new Location(world, commandInfo.x, commandInfo.y, commandInfo.z);
+
+			snitch = JukeAlert.getInstance().getSnitchManager().getSnitchAt(location);
+			if (snitch != null && !snitch.hasPermission(player, getPermission())) {
+				snitch = null;
+			}
+		}
+
 		if (snitch == null) {
-			player.sendMessage(
-					ChatColor.RED + "You do not own any snitches nearby or lack permission to view their logs!");
-			return;
-		}
-
-		renameSnitch(player, snitchName, snitch);
-	}
-
-	private static void executeFullDetails(Player player, String worldName, int x, int y, int z, String snitchName) {
-		World world = Bukkit.getWorld(worldName);
-		if (world == null) {
-			player.sendMessage(ChatColor.RED + "Invalid world.");
-			return;
-		}
-
-		Location location = new Location(world, x, y, z);
-		renameSnitch(player, snitchName, location);
-	}
-
-	private static void executeCoords(Player player, int x, int y, int z, String snitchName) {
-		World world = player.getLocation().getWorld();
-		Location location = new Location(world, x, y, z);
-		renameSnitch(player, snitchName, location);
-	}
-
-	private static void renameSnitch(Player player, String name, Location location) {
-		Snitch snitch = JukeAlert.getInstance().getSnitchManager().getSnitchAt(location);
-		if (snitch == null || !snitch.hasPermission(player, getPermission())) {
 			player.sendMessage(
 					ChatColor.RED + "You do not own a snitch at those coordinates or lack permission to rename it!");
 			return;
 		}
 
-		renameSnitch(player, name, snitch);
+		renameSnitch(player, commandInfo.snitchName, snitch);
 	}
 
 	private static void renameSnitch(Player player, String name, Snitch snitch) {
