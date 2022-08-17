@@ -32,6 +32,7 @@ public class SnitchLifeCycleListener implements Listener {
 	private SnitchTypeManager configManager;
 	private SnitchManager snitchManager;
 	private Map<Location, SnitchFactoryType> pendingSnitches;
+	private Map<Location, SnitchFactoryType> deletedSnitches;
 	private Logger logger;
 
 	public SnitchLifeCycleListener(SnitchManager snitchManager, SnitchTypeManager configManager, Logger logger) {
@@ -39,6 +40,7 @@ public class SnitchLifeCycleListener implements Listener {
 		this.snitchManager = snitchManager;
 		this.logger = logger;
 		this.pendingSnitches = new HashMap<>();
+		this.deletedSnitches = new HashMap<>();
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -67,12 +69,12 @@ public class SnitchLifeCycleListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
 		SnitchFactoryType snitchConfig = pendingSnitches.remove(block.getLocation());
-		if (snitchConfig == null) {
-			return;
-		}
-		if (block.getType() == snitchConfig.getItem().getType()) {
+		if (snitchConfig == null)
+			snitchConfig = this.deletedSnitches.remove(block.getLocation());
+
+		if (snitchConfig != null && block.getType() == snitchConfig.getItemMaterial()) {
 			event.setDropItems(false);
-			block.getWorld().dropItemNaturally(block.getLocation(), snitchConfig.getItem());
+			block.getWorld().dropItemNaturally(block.getLocation(), snitchConfig.getItemRepresentation());
 		}
 	}
 
@@ -119,6 +121,7 @@ public class SnitchLifeCycleListener implements Listener {
 			UUID uuid = source != null ? source.getUniqueId() : null;
 			String name =  source != null ? source.getName() : "ENVIRONMENT";
 			snitch.destroy(uuid, Cause.PLAYER);
+			this.deletedSnitches.put(rein.getLocation(), snitch.getType());
 			logger.info(String.format("%s destroyed snitch of type %s at %s", name, snitch.getType().getName(),
 					snitch.getLocation().toString()));
 		}

@@ -33,7 +33,7 @@ public class SnitchOverviewGUI {
 		final List<IClickable> clickables = new LinkedList<>();
 		for (final Snitch snitch : this.snitches) {
 			// Base the snitch icon on the snitch type
-			final var icon = snitch.getType().getItem().clone();
+			final var icon = snitch.getType().getItemRepresentation();
 			ItemUtils.handleItemMeta(icon, (ItemMeta meta) -> {
 				meta.setDisplayName(ChatColor.GOLD + snitch.getName());
 				final var location = snitch.getLocation();

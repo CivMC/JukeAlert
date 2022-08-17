@@ -19,18 +19,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
+
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class SnitchTypeManager {
 
 	private Map<String, Class<? extends AbstractSnitchAppender>> appenderClasses;
-	private Map<ItemStack, SnitchFactoryType> configFactoriesByItem;
+	private List<SnitchFactoryType> configFactories;
 	private Map<Integer, SnitchFactoryType> configFactoriesById;
 
 	public SnitchTypeManager() {
 		appenderClasses = new HashMap<>();
-		configFactoriesByItem = new HashMap<>();
+		configFactories = new ArrayList<>();
 		configFactoriesById = new HashMap<>();
 		registerAppenderTypes();
 	}
@@ -49,7 +53,7 @@ public class SnitchTypeManager {
 
 	public boolean parseFromConfig(ConfigurationSection config) {
 		Logger logger = JukeAlert.getInstance().getLogger();
-		ItemStack item = config.getItemStack("item", null);
+		SnitchFactoryType.ItemInfo item = getItemInfo(config);
 		StringBuilder sb = new StringBuilder();
 		if (item == null) {
 			logger.warning("Snitch type at " + config.getCurrentPath() + " had no item specified");
@@ -74,8 +78,12 @@ public class SnitchTypeManager {
 		sb.append(name);
 		sb.append(" with id: ");
 		sb.append(id);
-		sb.append(", item: ");
-		sb.append(item.toString());
+		sb.append(", item.material: ");
+		sb.append(item.material);
+		sb.append(", item.name: ");
+		sb.append(item.name);
+		sb.append(", item.lore: ");
+		sb.append(item.lore);
 		sb.append(", appenders: ");
 		List<Function<Snitch, AbstractSnitchAppender>> appenderInstanciations = new ArrayList<>();
 		if (config.isConfigurationSection("appender")) {
@@ -105,9 +113,24 @@ public class SnitchTypeManager {
 		}
 		SnitchFactoryType configFactory = new SnitchFactoryType(item, fieldGenerator, name, id, appenderInstanciations);
 		configFactoriesById.put(configFactory.getID(), configFactory);
-		configFactoriesByItem.put(configFactory.getItem(), configFactory);
+		configFactories.add(configFactory);
 		logger.info(sb.toString());
 		return true;
+	}
+
+	private static SnitchFactoryType.ItemInfo getItemInfo(ConfigurationSection config) {
+		String type = config.getString("item.material");
+		String name = config.getString("item.name");
+		List<String> lore = config.getStringList("item.lore");
+
+		Material material = Material.getMaterial(type);
+
+		SnitchFactoryType.ItemInfo item = new SnitchFactoryType.ItemInfo();
+		item.material = material;
+		item.name = name;
+		item.lore = lore;
+
+		return item;
 	}
 	
 	private Function<Snitch, FieldManager> getFieldInstanciation(ConfigurationSection config) {
@@ -191,12 +214,12 @@ public class SnitchTypeManager {
 	 *         exists
 	 */
 	public SnitchFactoryType getConfig(ItemStack is) {
-		if (is == null) {
-			return null;
+		for (SnitchFactoryType f : this.configFactories) {
+			if (f.isSame(is))
+				return f;
 		}
-		ItemStack copy = is.clone();
-		copy.setAmount(1);
-		return configFactoriesByItem.get(copy);
+
+		return null;
 	}
 
 	public SnitchFactoryType getConfig(int id) {
