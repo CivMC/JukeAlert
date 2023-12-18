@@ -2,7 +2,7 @@ package com.untamedears.jukealert.gui;
 
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.appender.DormantCullingAppender;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class SnitchOverviewGUI {
 	}
 
 	private List<IClickable> constructSnitchClickables() {
-		final List<IClickable> clickables = new LinkedList<>();
+		final List<IClickable> clickables = new ArrayList<>(this.snitches.size());
 		for (final Snitch snitch : this.snitches) {
 			// Base the snitch icon on the snitch type
 			final var icon = snitch.getType().getItem().clone();
