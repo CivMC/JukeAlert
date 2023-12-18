@@ -2,7 +2,7 @@ package com.untamedears.jukealert.gui;
 
 import com.untamedears.jukealert.model.Snitch;
 import com.untamedears.jukealert.model.appender.DormantCullingAppender;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
