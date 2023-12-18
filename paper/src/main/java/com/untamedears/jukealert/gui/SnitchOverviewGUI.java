@@ -30,7 +30,7 @@ public class SnitchOverviewGUI {
 	}
 
 	private List<IClickable> constructSnitchClickables() {
-		final List<IClickable> clickables = new ArrayList<>();
+		final List<IClickable> clickables = new ArrayList<>(this.snitches.size());
 		for (final Snitch snitch : this.snitches) {
 			// Base the snitch icon on the snitch type
 			final var icon = snitch.getType().getItem().clone();
