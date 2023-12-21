@@ -1,6 +1,6 @@
 # JukeAlert
 
-A Minecraft 1.18.2 plugin that turns Noteblocks and Jukeboxes into 'snitches' that record player entries and actions.
+A Minecraft 1.18.2 plugin that turns Noteblocks and Jukeboxes into 'snitches' that record player entries and actions. Snitches allow players to deal with griefers without the need for admin involvement.
 
 ## Usage
 
